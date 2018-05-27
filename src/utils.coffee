@@ -17,7 +17,7 @@ names2 = ["Sophia", "Emma", "Olivia", "Isabella", "Mia", "Ava", "Lily", "Zoe", "
   "Taylor", "Callie", "Penelope", "Camilla", "Bailey", "Kaelyn", "Alexis", "Kayla", "Katherine", "Sydney", "Lauren",
   "Jasmine", "London", "Bella", "Adeline", "Caroline", "Vivian", "Juliana", "Gianna", "Skyler", "Jordyn"]
 
-module.exports.getRandomName = (prefix = "") ->
+module.exports.getRandomCreepName = (prefix = "") ->
   tries = 0
   loop
     nameArray = if Math.random() > .5 then names1 else names2;
@@ -28,3 +28,8 @@ module.exports.getRandomName = (prefix = "") ->
       break
     tries++
   return prefix + name
+
+module.exports.cton = (pos) -> pos.x * 50 + pos.y
+module.exports.ntoc = (n) ->
+  y = n % 50
+  return {x: (n-y) // 50, y: y}
