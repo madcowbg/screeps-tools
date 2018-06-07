@@ -17,15 +17,16 @@ names2 = ["Sophia", "Emma", "Olivia", "Isabella", "Mia", "Ava", "Lily", "Zoe", "
   "Taylor", "Callie", "Penelope", "Camilla", "Bailey", "Kaelyn", "Alexis", "Kayla", "Katherine", "Sydney", "Lauren",
   "Jasmine", "London", "Bella", "Adeline", "Caroline", "Vivian", "Juliana", "Gianna", "Skyler", "Jordyn"]
 
+nameGenSimple = () -> randUn(randUn([names1, names2]))
+
 module.exports.getRandomCreepName = (prefix = "") ->
   tries = 0
   loop
-    nameArray = if Math.random() > .5 then names1 else names2;
-    name = nameArray[Math.floor(Math.random() * nameArray.length)];
-    name += " " + nameArray[Math.floor(Math.random() * nameArray.length)] if tries > 3
+    name = nameGen()
+    name += " " + nameGen() if tries > 3
 
-    unless Game.creeps[name]?
-      break
+    break unless Game.creeps[name]?
+
     tries++
   return prefix + name
 
@@ -33,3 +34,20 @@ module.exports.cton = (pos) -> pos.x * 50 + pos.y
 module.exports.ntoc = (n) ->
   y = n % 50
   return {x: (n-y) // 50, y: y}
+
+
+nm1 = ["a","e","i","u","o","a","ai","aiu","aiue","e","i","ia","iau","iu","o","u","y","ya","yi","yo"]
+nm2 = ["bh","br","c'th","cn","ct","cth","cx","d","d'","g","gh","ghr","gr","h","k","kh","kth","mh","mh'","ml","n","ng","sh","t","th","tr","v","v'","vh","vh'","vr","x","z","z'","zh"];
+nm3 = ["a","e","i","u","o","a","e","i","u","o","ao","aio","ui","aa","io","ou","y"];
+nm4 = ["bb","bh","br","cn","ct","dh","dhr","dr","drr","g","gd","gg","ggd","gh","gn","gnn","gr","jh","kl","l","ld","lk","ll","lp","lth","mbr","nd","p","r","rr","rv","th","thl","thr","thrh","tl","vh","x","xh","z","zh","zt"];
+nm5 = ["","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","","'dhr","'dr","'end","'gn","'ith","'itr","'k","'kr","'l","'m","'r","'th","'vh","'x","'zh"];
+nm6 = ["a","e","i","u","o"];
+nm7 = ["","","","","","","","","","","d","g","h","l","lb","lbh","n","r","rc","rh","s","sh","ss","st","sz","th","tl","x","xr","xz"];
+
+randUn = (arr) -> arr[Math.floor(Math.random() * arr.length)]
+nameGen = () -> _.startCase((randUn nameGens)())
+
+nameGens = [
+  () -> _.map([nm2, nm3, nm4, nm5, nm6, nm7], randUn).join(""),
+  () -> _.map([nm1, nm2, nm3, nm4, nm5, nm6, nm7], randUn).join("")
+]
