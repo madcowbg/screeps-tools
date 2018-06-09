@@ -55,19 +55,17 @@ module.exports.runBasicStats = () ->
 runBasicStatsRoom = (room) ->
   isMyRoom = if room.controller then room.controller.my else 0
 
+  setStat "room.#{room.name}.myRoom", isMyRoom
   if isMyRoom
-    setStat "room." + room.name + ".myRoom", 1
-    setStat "room." + room.name + ".energyAvailable",  room.energyAvailable
-    setStat "room." + room.name + ".energyCapacityAvailable",  room.energyCapacityAvailable
+    setStat "room.#{room.name}.energyAvailable",  room.energyAvailable
+    setStat "room.#{room.name}.energyCapacityAvailable",  room.energyCapacityAvailable
 
     if room.controller?
-      setStat "room." + room.name + ".controllerProgress", room.controller.progress
-      setStat "room." + room.name + ".controllerProgressTotal", room.controller.progressTotal
+      setStat "room.#{room.name}.controllerProgress", room.controller.progress
+      setStat "room.#{room.name}.controllerProgressTotal", room.controller.progressTotal
 
     stored = if room.storage then room.storage.store[RESOURCE_ENERGY] else 0
-    setStat "room." + room.name + ".storedEnergy", stored
-  else
-    setStat "room." + room.name + ".myRoom",  0
+    setStat "room.#{room.name}.storedEnergy", stored
 
   setStat "room.#{room.name}.source.#{source.id}.energy", source.energy for source in room.find(FIND_SOURCES)
 
