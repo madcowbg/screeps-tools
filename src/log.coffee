@@ -20,8 +20,8 @@ module.exports.error = (msg) ->
 module.exports.debug = (msg) ->
   tickLog (color "green") msg
 
-module.exports.lore = (msg) ->
-  tickLog (color "teal") msg
+if Memory.showLore
+  module.exports.lore = (msg) -> tickLog (color "teal") msg
 
 module.exports.assert = (condition, msg) ->
   unless condition == true
