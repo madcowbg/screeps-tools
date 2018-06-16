@@ -1,3 +1,4 @@
+log = require 'log'
 
 # Memory.statistics: {[key: number]: StatisticsData};
 # StatisticsData - values: {[key: string]: number | undefined}
@@ -5,11 +6,8 @@ MAX_TICKS_STATS = 10;
 
 Memory.statistics = {} unless Memory.statistics?
 
-init = () =>  Memory.statistics[Game.time] = {values: {}} unless Memory.statistics[Game.time]?
-
 setStat = (statistic, value) ->
-  do init
-  Memory.statistics[Game.time].values[statistic] = value
+  (Memory.statistics[Game.time] ?= {values: {}}).values[statistic] = value
 
 clean = (beforeTick) ->
   return unless Memory.statistics?
@@ -23,34 +21,30 @@ cleanup = () ->
     #      console.log "cleaning #{statisticTimes[statisticTimes.length - MAX_TICKS_STATS]}!"
     clean statisticTimes[statisticTimes.length - MAX_TICKS_STATS + 1]
 
-module.exports.setStat = setStat
-
-module.exports.runCpuStats = () ->
+module.exports.endTick = () ->
+  do cleanup
   setStat "cpu.bucket",  Game.cpu.bucket
   setStat "cpu.limit",  Game.cpu.limit
-#// setStat("cpu.stats",  Game.cpu.getUsed() - lastTick
+  # // setStat("cpu.stats",  Game.cpu.getUsed() - lastTick
   setStat "cpu.getUsed",  Game.cpu.getUsed()
+  setStat "done", 1
 
+module.exports.setStat = setStat
+#module.exports.forRoom = (room) ->
+#  setStat: (statistic, value) ->
+#    setStat "room.#{room.name}.#{statistic}", value
 
-module.exports.initStats = () ->
+module.exports.beginTick = () ->
   now = Date.now()
   setStat "time", (now - now % 1000)
-
-module.exports.runBasicStats = () ->
-  runBasicStatsRoom room for i, room of Game.rooms
+  setStat "tick", Game.time
 
   setStat "gcl.progress",  Game.gcl.progress
   setStat "gcl.progressTotal",  Game.gcl.progressTotal
   setStat "gcl.level",  Game.gcl.level
 
-  #// for (const spawnKey in spawns) {
-  #//   const spawn = Game.spawns[spawnKey];
-  #//   setStat("spawn." + spawn.name + ".defenderIndex",  spawn.memory.defenderIndex;
-  #// }
-
-  setStat "ai.build", Memory.buildN if Memory.buildN?
-  setStat "ai.creeps.count", (i for i of Game.creeps).length
-  setStat "ai.creeps.costPerTick", (_.sum (creep.costPerTick() for i, creep of Game.creeps))
+  # TODO move this to colony logic...
+  runBasicStatsRoom room for rn, room of Game.rooms
 
 runBasicStatsRoom = (room) ->
   isMyRoom = if room.controller then room.controller.my else 0
@@ -61,15 +55,13 @@ runBasicStatsRoom = (room) ->
     setStat "room.#{room.name}.energyCapacityAvailable",  room.energyCapacityAvailable
 
     if room.controller?
-      setStat "room.#{room.name}.controllerProgress", room.controller.progress
-      setStat "room.#{room.name}.controllerProgressTotal", room.controller.progressTotal
+      setStat "room.#{room.name}.controller.level", room.controller.level
+      setStat "room.#{room.name}.controller.progress", room.controller.progress
+      setStat "room.#{room.name}.controller.progressTotal", room.controller.progressTotal
 
     stored = if room.storage then room.storage.store[RESOURCE_ENERGY] else 0
     setStat "room.#{room.name}.storedEnergy", stored
 
-  setStat "room.#{room.name}.source.#{source.id}.energy", source.energy for source in room.find(FIND_SOURCES)
-
-  setStat "room.#{room.name}.creeps.count", (i for i, creep of Game.creeps when creep.room.name == room.name).length
-  setStat "room.#{room.name}.creeps.costPerTick", (_.sum (creep.costPerTick() for i, creep of Game.creeps when creep.room.name == room.name))
-
-  do cleanup
+  for source in room.find(FIND_SOURCES)
+    setStat "room.#{room.name}.source.#{source.id}.energy", source.energy
+    setStat "room.#{room.name}.source.#{source.id}.energyCapacity", source.energyCapacity

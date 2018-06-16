@@ -3,27 +3,31 @@ bold = (msg) -> "<b>#{msg}</b>"
 ital = (msg) -> "<i>#{msg}</i>"
 color = (color) -> (msg) -> "<font color='#{color}'>#{msg}</font>"
 
-tickLog = (msg) -> console.log (((color "#444") "[#{Game.time}]") + msg)
+tickLog = () -> console.log(((color "#444") "[#{Game.time}]") + toStr arguments)
 
-module.exports.important = (msg) ->
-  tickLog (color "blue") bold msg
+toStr = (args) ->
+  #  console.log args
+  if args.length == 1 then args[0] else (Array.prototype.slice.call(args).join ",")
+
+module.exports.important = () ->
+  tickLog (color "blue") bold toStr arguments
 
 if Memory.showInfo
-  module.exports.info = (msg) -> tickLog (color "grey") ital msg
+  module.exports.info = () -> tickLog (color "grey") ital toStr arguments
 
-module.exports.warn = (msg) ->
-  tickLog (color "yellow") msg
+module.exports.warn = () ->
+  tickLog (color "yellow") toStr arguments
 
-module.exports.error = (msg) ->
-  tickLog (color "red") bold msg
+module.exports.error = () ->
+  tickLog (color "red") bold toStr arguments
 
-module.exports.debug = (msg) ->
-  tickLog (color "green") msg
+module.exports.debug = () ->
+  tickLog (color "green") toStr arguments
 
 if Memory.showLore
-  module.exports.lore = (msg) -> tickLog (color "teal") msg
+  module.exports.lore = () -> tickLog (color "teal") toStr arguments
 
-module.exports.assert = (condition, msg) ->
+module.exports.assert = (condition, args...) ->
   unless condition == true
-    module.exports.error msg
-    throw new Error "AssertionError: #{msg}"
+    module.exports.error toStr args
+    throw new Error "AssertionError: #{toStr args}"
