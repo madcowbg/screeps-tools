@@ -24,6 +24,9 @@ module.exports.error = () ->
 module.exports.debug = () ->
   tickLog (color "green") toStr arguments
 
+module.exports.trace = () ->
+  tickLog (color "green") toStr arguments
+
 if Memory.showLore
   module.exports.lore = () -> tickLog (color "teal") toStr arguments
 
