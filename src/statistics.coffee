@@ -22,10 +22,6 @@ cleanup = () ->
     clean statisticTimes[statisticTimes.length - MAX_TICKS_STATS + 1]
 
 module.exports.endTick = () ->
-  do cleanup
-  setStat "cpu.bucket",  Game.cpu.bucket
-  setStat "cpu.limit",  Game.cpu.limit
-  # // setStat("cpu.stats",  Game.cpu.getUsed() - lastTick
   setStat "cpu.getUsed",  Game.cpu.getUsed()
   setStat "done", 1
 
@@ -36,6 +32,10 @@ module.exports.setStat = setStat
 
 module.exports.beginTick = () ->
   now = Date.now()
+  do cleanup
+  setStat "cpu.bucket",  Game.cpu.bucket
+  setStat "cpu.limit",  Game.cpu.limit
+
   setStat "time", (now - now % 1000)
   setStat "tick", Game.time
 
