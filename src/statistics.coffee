@@ -44,7 +44,8 @@ module.exports.beginTick = () ->
   setStat "gcl.level",  Game.gcl.level
 
   # TODO move this to colony logic...
-  runBasicStatsRoom room for rn, room of Game.rooms
+  (runBasicStatsRoom room) for rn, room of Game.rooms
+  setStat "ai.numCreeps", (_.keys Game.creeps).length
 
 runBasicStatsRoom = (room) ->
   isMyRoom = if room.controller then room.controller.my else 0
