@@ -1,25 +1,22 @@
 log = require 'log'
 
-# Memory.statistics: {[key: number]: StatisticsData};
-# StatisticsData - values: {[key: string]: number | undefined}
-MAX_TICKS_STATS = 10;
+MAX_TICKS_STORED_STATISTIC = 10
 
-Memory.statistics ?= {} # fixme deprecated
 Memory.stats ?= {}
 
 clean = (beforeTick) ->
-  if Memory.statistics?
-    delete Memory.statistics[time] for time of Memory.statistics when parseInt(time, 10) <= beforeTick
-  if Memory.stats?
-    delete Memory.stats[time] for time of Memory.stats when parseInt(time, 10) <= beforeTick
 
-cleanup = () ->
-  statisticTimes = (parseInt(time, 10) for time, s of Memory.statistics)
+cleanupStoredStatistics = () ->
+  return unless Memory.stats?
+
+  statisticTimes = (parseInt(time, 10) for time, s of Memory.stats)
   #    console.log statisticTimes.length
-  if statisticTimes.length > MAX_TICKS_STATS
-    statisticTimes = statisticTimes.sort()
-    #      console.log "cleaning #{statisticTimes[statisticTimes.length - MAX_TICKS_STATS]}!"
-    clean statisticTimes[statisticTimes.length - MAX_TICKS_STATS + 1]
+  return if statisticTimes.length < MAX_TICKS_STORED_STATISTIC
+
+  statisticTimes = statisticTimes.sort()
+    #      console.log "cleaning #{statisticTimes[statisticTimes.length - MAX_TICKS_STORED_STATISTIC]}!"
+  for time of Memory.stats when parseInt(time, 10) <= statisticTimes[statisticTimes.length - MAX_TICKS_STORED_STATISTIC + 1]
+    delete Memory.stats[time]
 
 module.exports.endTick = () ->
   new Writer("cpu")
@@ -29,15 +26,15 @@ module.exports.endTick = () ->
 
 class Writer
   constructor: (thisName, parentWriter) ->
-    Memory.stats = {}
-    @obj = if parentWriter? then (parentWriter.obj[thisName] ?= {}) else ((Memory.stats[Game.time] ?= {})[thisName] ?= {})
-
-    @statisticsMemoryForTick = (Memory.statistics[Game.time] ?= {values: {}}).values # fixme deprecated
-    @totalPath = if parentWriter? then "#{parentWriter.totalPath}.#{thisName}" else thisName # fixme don't use that... deprecated
+    @obj = # FIXME rename
+      if parentWriter?
+        parentWriter.obj[thisName] ?= {}
+      else
+        (Memory.stats[Game.time] ?= {})[thisName] ?= {}
 
   write: (statName, value) ->
+    @obj[statName] = value
     # log.info? "#{@totalPath}.#{statName}", value
-    @statisticsMemoryForTick["#{@totalPath}.#{statName}"] = value # fixme use objects instead
     return @
 
   sub: (childName) -> new Writer(childName, @)
@@ -46,7 +43,7 @@ module.exports.root = (rootName) -> new Writer rootName
 
 module.exports.beginTick = () ->
   now = Date.now()
-  do cleanup
+  do cleanupStoredStatistics
   new Writer("cpu")
     .write "bucket", Game.cpu.bucket
     .write "limit", Game.cpu.limit
