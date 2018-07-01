@@ -6,7 +6,7 @@ Memory.stats ?= {}
 
 clean = (beforeTick) ->
 
-cleanupStoredStatistics = () ->
+module.exports.gc = () ->
   return unless Memory.stats?
 
   statisticTimes = (parseInt(time, 10) for time, s of Memory.stats)
@@ -19,31 +19,32 @@ cleanupStoredStatistics = () ->
     delete Memory.stats[time]
 
 module.exports.endTick = () ->
+  (runBasicStatsRoom room) for rn, room of Game.rooms
+
   new Writer("cpu")
     .write "getUsed", Game.cpu.getUsed()
   new Writer("ai")
     .write "done", 1
 
 class Writer
-  constructor: (thisName, parentWriter) ->
-    @obj = # FIXME rename
-      if parentWriter?
-        parentWriter.obj[thisName] ?= {}
+  constructor: (thisName, parentObject=null) ->
+    @statisticsValuesObject =
+      if parentObject?
+        parentObject[thisName] ?= {}
       else
         (Memory.stats[Game.time] ?= {})[thisName] ?= {}
 
   write: (statName, value) ->
-    @obj[statName] = value
+    @statisticsValuesObject[statName] = value
     # log.info? "#{@totalPath}.#{statName}", value
     return @
 
-  sub: (childName) -> new Writer(childName, @)
+  sub: (childName) -> new Writer(childName, @statisticsValuesObject)
 
 module.exports.root = (rootName) -> new Writer rootName
 
 module.exports.beginTick = () ->
   now = Date.now()
-  do cleanupStoredStatistics
   new Writer("cpu")
     .write "bucket", Game.cpu.bucket
     .write "limit", Game.cpu.limit
@@ -55,30 +56,35 @@ module.exports.beginTick = () ->
     .write "progressTotal",  Game.gcl.progressTotal
     .write "level",  Game.gcl.level
 
-  # TODO move this to colony logic...
-  (runBasicStatsRoom room) for rn, room of Game.rooms
   new Writer("ai")
     .write "numCreeps", (_.keys Game.creeps).length
 
 runBasicStatsRoom = (room) ->
   isMyRoom = if room.controller then room.controller.my else 0
-  stats = new Writer("room").sub(room.name)
-  stats.write "myRoom", isMyRoom
+  roomStats = new Writer("room").sub(room.name)
+  roomStats.write "myRoom", isMyRoom
   if isMyRoom
     stored = if room.storage then room.storage.store[RESOURCE_ENERGY] else 0
 
-    stats
+    roomStats
       .write "storedEnergy", stored
       .write "energyAvailable",  room.energyAvailable
       .write "energyCapacityAvailable",  room.energyCapacityAvailable
 
     if room.controller?
-      stats.sub "controller"
+      roomStats.sub "controller"
         .write "level", room.controller.level
         .write "progress", room.controller.progress
         .write "progressTotal", room.controller.progressTotal
 
   for source in room.find(FIND_SOURCES)
-    stats.sub("source").sub(source.id)
+    roomStats.sub("source").sub(source.id)
       .write "energy", source.energy
       .write "energyCapacity", source.energyCapacity
+
+  roomStats.sub("resources")
+    .write "consumers", room.resourceNetwork.data.consumers.length
+    .write "suppliers", room.resourceNetwork.data.suppliers.length
+    .write "courierTransferPickups", room.resourceNetwork.data.courierTransferPickups.length
+    .write "courierDelivery", room.resourceNetwork.data.courierDelivery.length
+    .write "dumps", room.resourceNetwork.data.dumps.length
