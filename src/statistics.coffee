@@ -82,9 +82,10 @@ runBasicStatsRoom = (room) ->
       .write "energy", source.energy
       .write "energyCapacity", source.energyCapacity
 
-  roomStats.sub("resources")
-    .write "consumers", room.resourceNetwork.data.consumers.length
-    .write "suppliers", room.resourceNetwork.data.suppliers.length
-    .write "courierTransferPickups", room.resourceNetwork.data.courierTransferPickups.length
-    .write "courierDelivery", room.resourceNetwork.data.courierDelivery.length
-    .write "dumps", room.resourceNetwork.data.dumps.length
+  if room.resourceNetwork?
+    roomStats.sub("resources")
+      .write "consumers", room.resourceNetwork.data.consumers.length
+      .write "suppliers", room.resourceNetwork.data.suppliers.length
+      .write "courierTransferPickups", room.resourceNetwork.data.courierTransferPickups.length
+      .write "courierDelivery", room.resourceNetwork.data.courierDelivery.length
+      .write "dumps", room.resourceNetwork.data.dumps.length
