@@ -1,4 +1,5 @@
 .idea/
 js/
+build/
 node_modules/
 ScreepsAutocomplete-master/
