@@ -13,7 +13,8 @@ toStr = (args) ->
 module.exports.important = () ->
   tickLog (color "blue") bold toStr arguments
 
-module.exports.info = () -> tickLog (color "grey") ital toStr arguments
+if Memory.switches?.log?.showInfo
+  module.exports.info = () -> tickLog (color "grey") ital toStr arguments
 
 module.exports.warn = () ->
   tickLog (color "yellow") toStr arguments
@@ -27,7 +28,8 @@ module.exports.debug = () ->
 module.exports.trace = () ->
   tickLog (color "green") toStr arguments
 
-module.exports.lore = () -> tickLog (color "teal") toStr arguments
+if Memory.switches?.log?.showLore
+  module.exports.lore = () -> tickLog (color "teal") toStr arguments
 
 module.exports.assert = (condition, args...) ->
   unless condition == true

@@ -101,8 +101,8 @@ opmNameFun = [
   () -> _.map([opm.nm1, opm.nm2], random.element).join(" ")
 ]
 
-module.exports.genUniqueCreepName = (allCreeps, prefix = "", suffix = "") ->
+module.exports.genUniqueCreepName = (prefix = "", suffix = "") ->
   for i in [0...10]
     name = prefix + changeCase((random.element opmNameFun)()) + suffix
-    return name unless allCreeps[name]?
+    return name unless Game.creeps[name]?
   throw new Error "creep name duplicate generated: #{name} after 10 retries!"
