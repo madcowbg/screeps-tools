@@ -3,7 +3,8 @@ bold = (msg) -> "<b>#{msg}</b>"
 ital = (msg) -> "<i>#{msg}</i>"
 color = (color) -> (msg) -> "<font color='#{color}'>#{msg}</font>"
 
-tickLog = () -> console.log(((color "#444") "[#{Game.time}]") + toStr arguments)
+module.exports.theTime = -1
+tickLog = () -> console.log(((color "#444") "[#{module.exports.theTime}]") + toStr arguments)
 
 toStr = (args) ->
   #  console.log args
@@ -12,8 +13,7 @@ toStr = (args) ->
 module.exports.important = () ->
   tickLog (color "blue") bold toStr arguments
 
-if Memory.showInfo
-  module.exports.info = () -> tickLog (color "grey") ital toStr arguments
+module.exports.info = () -> tickLog (color "grey") ital toStr arguments
 
 module.exports.warn = () ->
   tickLog (color "yellow") toStr arguments
@@ -27,8 +27,7 @@ module.exports.debug = () ->
 module.exports.trace = () ->
   tickLog (color "green") toStr arguments
 
-if Memory.showLore
-  module.exports.lore = () -> tickLog (color "teal") toStr arguments
+module.exports.lore = () -> tickLog (color "teal") toStr arguments
 
 module.exports.assert = (condition, args...) ->
   unless condition == true
