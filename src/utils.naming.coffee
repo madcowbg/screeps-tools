@@ -1,5 +1,5 @@
+_ = require('lodash')
 random = require 'utils.random'
-log = require 'log'
 
 ### planet names generator http://www.fantasynamegenerators.com/ ###
 p =
@@ -20,10 +20,11 @@ planetNameFuns = [
 ]
 
 module.exports.genUniqueSpawnName = () ->
-  loop
+  for i in [0...10]
     name = changeCase((random.element planetNameFuns)())
     return name unless Game.spawns[name]?
-    log.error "spawn name duplicate generated: #{name}"
+
+  throw new Error "spawn name duplicate generated: #{name} after 10 retries!"
 
 ### lovecraftian names generator http://www.fantasynamegenerators.com/ ###
 lc =
@@ -100,8 +101,8 @@ opmNameFun = [
   () -> _.map([opm.nm1, opm.nm2], random.element).join(" ")
 ]
 
-module.exports.genUniqueCreepName = (prefix = "", suffix = "") ->
-  loop
+module.exports.genUniqueCreepName = (allCreeps, prefix = "", suffix = "") ->
+  for i in [0...10]
     name = prefix + changeCase((random.element opmNameFun)()) + suffix
-    return name unless Game.creeps[name]?
-    log.error "creep name duplicate generated: #{name}"
+    return name unless allCreeps[name]?
+  throw new Error "creep name duplicate generated: #{name} after 10 retries!"
