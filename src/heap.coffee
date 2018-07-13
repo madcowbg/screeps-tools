@@ -1,12 +1,16 @@
 module.exports = class Heap
   constructor: (@scoreFunction, @content = []) ->
-    throw new Error("undefined scoring function!") unless @scoreFunction?
+    throw new Error("undefined scoring function!") unless typeof @scoreFunction == "function"
 
   push: (element) ->
     # Add the new element to the end of the array.
     @content.push(element);
     # Allow it to bubble up.
-    @bubbleUp(@content.length - 1);
+    @_bubbleUp(@content.length - 1);
+
+  top: () ->
+    throw new Error() if @content.length == 0
+    return @content[0]
 
   pop: () ->
     throw new Error() if @content.length == 0
@@ -18,28 +22,28 @@ module.exports = class Heap
     # If there are any elements left, put the end element at the start, and let it sink down.
     if @content.length > 0
       @content[0] = end
-      @sinkDown(0)
+      @_sinkDown(0)
 
     return result
 
-  remove: (node) ->
+  remove: (element) ->
     length = @content.length;
     # To remove a value, we must search through the array to find it.
     for i in [0...length]
-      continue if (@content[i] != node)
+      continue if (@content[i] != element)
       # When it is found, the process seen in 'pop' is repeated to fill up the hole.
       end = @content.pop();
       # If the element we popped was the one we needed to remove, we're done.
       if (i < length - 1)
         # Otherwise, we replace the removed element with the popped one, and allow it to float up or sink down as appropriate.
         @content[i] = end;
-        @bubbleUp(i);
-        @sinkDown(i);
+        @_bubbleUp(i);
+        @_sinkDown(i);
       break
 
   size: () -> @content.length
 
-  bubbleUp: (n) ->
+  _bubbleUp: (n) ->
 #   Fetch the element that has to be moved.
     element = @content[n]
     score = @scoreFunction(element)
@@ -57,7 +61,7 @@ module.exports = class Heap
       @content[n] = parent;
       n = parentN
 
-  sinkDown: (n) ->
+  _sinkDown: (n) ->
     # Look up the target element and its score.
     length = @content.length
     element = @content[n]
