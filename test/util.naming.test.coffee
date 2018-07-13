@@ -1,6 +1,3 @@
-global.Game = {}
-global.Memory = {}
-
 _ = require 'lodash'
 naming = require './utils.naming'
 
