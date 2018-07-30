@@ -1,10 +1,10 @@
 _ = require 'lodash'
-Heap = require 'heap'
+PriorityQueue = require 'utils.priority_queue'
 
 test "invalid heap ops", ->
-  expect(() -> new Heap()).toThrow()
-  expect(() -> new Heap("5")).toThrow()
-  expect(heap = new Heap((i) -> i * i - 5 * i)).toBeDefined()
+  expect(() -> new PriorityQueue()).toThrow()
+  expect(() -> new PriorityQueue("5")).toThrow()
+  expect(heap = new PriorityQueue((i) -> i * i - 5 * i)).toBeDefined()
   expect(heap.size()).toBe 0
   expect(() -> heap.top()).toThrow() # empty heap...
   expect(() -> heap.pop()).toThrow() # empty heap...
@@ -16,7 +16,7 @@ rndData = () ->
 
 test "push/pop unique to heap", ->
   [f, vals] = rndData()
-  heap = new Heap(f)
+  heap = new PriorityQueue(f)
   heap.push val for val in vals
   expect(heap.size()).toBe vals.length
 
@@ -25,7 +25,7 @@ test "push/pop unique to heap", ->
 
 test "push/remove unique to heap", ->
   [f, vals] = rndData()
-  heap = new Heap(f)
+  heap = new PriorityQueue(f)
   heap.push val for val, i in vals when i < 10
   expect(heap.size()).toBe 10
   heap.remove(val) for val, i in vals when i < 5
@@ -37,7 +37,7 @@ test "push/remove unique to heap", ->
 
 test "push/pop/remove duplicates to heap", ->
   [f, _vals] = rndData()
-  heap = new Heap(f)
+  heap = new PriorityQueue(f)
   heap.push v for v in [2, 3, 2, 2, 3, 5, 6]
   expect(heap.size()).toBe 7
   heap.remove 2

@@ -1,4 +1,4 @@
-module.exports = class Heap
+module.exports = class PriorityQueue
   constructor: (@scoreFunction, @content = []) ->
     throw new Error("undefined scoring function!") unless typeof @scoreFunction == "function"
 
