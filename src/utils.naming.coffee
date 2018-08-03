@@ -1,5 +1,4 @@
 _ = require('lodash')
-random = require 'utils.random'
 
 ### planet names generator http://www.fantasynamegenerators.com/ ###
 p =
@@ -12,16 +11,16 @@ p =
   nm7: ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","0","1","2","3","4","5","6","7","8","9","0","1","2","3","4","5","6","7","8","9","","","","","","","","","","","","","",""];
 
 planetNameFuns = [
-  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm4, p.nm5], random.element).join(""),
-  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm6], random.element).join(""),
-  () -> _.map([p.nm1, p.nm4, p.nm5], random.element).join(""),
-  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm2, p.nm5], random.element).join(""),
-  () -> _.map([p.nm3, p.nm6, p.nm7, p.nm7, p.nm7, p.nm7], random.element).join("")
+  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm4, p.nm5], _.sample).join(""),
+  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm6], _.sample).join(""),
+  () -> _.map([p.nm1, p.nm4, p.nm5], _.sample).join(""),
+  () -> _.map([p.nm1, p.nm2, p.nm3, p.nm2, p.nm5], _.sample).join(""),
+  () -> _.map([p.nm3, p.nm6, p.nm7, p.nm7, p.nm7, p.nm7], _.sample).join("")
 ]
 
 module.exports.genUniqueSpawnName = () ->
   for i in [0...10]
-    name = changeCase((random.element planetNameFuns)())
+    name = changeCase((_.sample planetNameFuns)())
     return name unless Game.spawns[name]?
 
   throw new Error "spawn name duplicate generated: #{name} after 10 retries!"
@@ -37,8 +36,8 @@ lc =
   nm7: ["","","","","","","","","","","d","g","h","l","lb","lbh","n","r","rc","rh","s","sh","ss","st","sz","th","tl","x","xr","xz"];
 
 creepNamesFuns = [
-  () -> _.map([lc.nm2, lc.nm3, lc.nm4, lc.nm5, lc.nm6, lc.nm7], random.element).join(""),
-  () -> _.map([lc.nm1, lc.nm2, lc.nm3, lc.nm4, lc.nm5, lc.nm6, lc.nm7], random.element).join("")
+  () -> _.map([lc.nm2, lc.nm3, lc.nm4, lc.nm5, lc.nm6, lc.nm7], _.sample).join(""),
+  () -> _.map([lc.nm1, lc.nm2, lc.nm3, lc.nm4, lc.nm5, lc.nm6, lc.nm7], _.sample).join("")
 ]
 
 changeCase = (str) ->
@@ -71,7 +70,7 @@ names2 = ["Sophia", "Emma", "Olivia", "Isabella", "Mia", "Ava", "Lily", "Zoe", "
   "Taylor", "Callie", "Penelope", "Camilla", "Bailey", "Kaelyn", "Alexis", "Kayla", "Katherine", "Sydney", "Lauren",
   "Jasmine", "London", "Bella", "Adeline", "Caroline", "Vivian", "Juliana", "Gianna", "Skyler", "Jordyn"]
 
-nameGenSimple = () -> random.element random.element [names1, names2]
+nameGenSimple = () -> _.sample _.sample [names1, names2]
 
 ### one punch man names generator http://www.fantasynamegenerators.com/ ###
 opm =
@@ -97,12 +96,12 @@ opm =
     "Toad","Tooth","Trash","Tremor","Trick","Twist","Veil","Web","Whip","Whistle","Wish","Worm"]
 
 opmNameFun = [
-  () -> random.element opm.nm2,
-  () -> _.map([opm.nm1, opm.nm2], random.element).join(" ")
+  () -> _.sample opm.nm2,
+  () -> _.map([opm.nm1, opm.nm2], _.sample).join(" ")
 ]
 
 module.exports.genUniqueCreepName = (prefix = "", suffix = "") ->
   for i in [0...10]
-    name = prefix + changeCase((random.element opmNameFun)()) + suffix
+    name = prefix + changeCase((_.sample opmNameFun)()) + suffix
     return name unless Game.creeps[name]?
   throw new Error "creep name duplicate generated: #{name} after 10 retries!"
