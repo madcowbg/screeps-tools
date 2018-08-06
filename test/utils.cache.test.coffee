@@ -102,6 +102,6 @@ test "memoize for tick", ->
   memoizedFun(i % 8) for i in [1..20]
   expect(fnRetDef.mock.calls.length).toBe(8)
 
-  Game.time += 1  # advance time ...
+  manipulation.Game.nextTick()
   memoizedFun(i % 6) for i in [1..20]
   expect(fnRetDef.mock.calls.length).toBe(8 + 6)
