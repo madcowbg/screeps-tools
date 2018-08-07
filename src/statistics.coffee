@@ -4,27 +4,17 @@ MAX_TICKS_STORED_STATISTIC = 10
 
 Memory.stats ?= {}
 
-clean = (beforeTick) ->
-
 module.exports.gc = () ->
   return unless Memory.stats?
 
   statisticTimes = (parseInt(time, 10) for time, s of Memory.stats)
-  #    console.log statisticTimes.length
+  # console.log statisticTimes.length
   return if statisticTimes.length < MAX_TICKS_STORED_STATISTIC
 
   statisticTimes = statisticTimes.sort()
-    #      console.log "cleaning #{statisticTimes[statisticTimes.length - MAX_TICKS_STORED_STATISTIC]}!"
+  # console.log "cleaning #{statisticTimes[statisticTimes.length - MAX_TICKS_STORED_STATISTIC]}!"
   for time of Memory.stats when parseInt(time, 10) <= statisticTimes[statisticTimes.length - MAX_TICKS_STORED_STATISTIC + 1]
     delete Memory.stats[time]
-
-module.exports.endTick = () ->
-  (runBasicStatsRoom room) for rn, room of Game.rooms
-
-  new Writer("cpu")
-    .write "getUsed", Game.cpu.getUsed()
-  new Writer("ai")
-    .write "done", 1
 
 class Writer
   constructor: (thisName, parentObject=null) ->
@@ -42,6 +32,15 @@ class Writer
   sub: (childName) -> new Writer(childName, @statisticsValuesObject)
 
 module.exports.root = (rootName) -> new Writer rootName
+
+# FIXME Move next to proper places - NOT covered by tests!
+module.exports.endTick = () ->
+  (runBasicStatsRoom room) for rn, room of Game.rooms
+
+  new Writer("cpu")
+    .write "getUsed", Game.cpu.getUsed()
+  new Writer("ai")
+    .write "done", 1
 
 module.exports.beginTick = () ->
   now = Date.now()
