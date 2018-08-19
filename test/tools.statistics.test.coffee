@@ -1,6 +1,6 @@
 _ = require 'lodash'
 
-statistics = require 'statistics'
+statistics = require 'tools.statistics'
 
 beforeEach =>
   Memory.stats = {}

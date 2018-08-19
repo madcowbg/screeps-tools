@@ -1,5 +1,5 @@
 _ = require 'lodash'
-naming = require './utils.naming'
+naming = require './tools.naming'
 
 test 'generating creep name with undefined', () ->
   expect(() -> naming.genUniqueCreepName()).toBeDefined()

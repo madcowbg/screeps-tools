@@ -1,4 +1,4 @@
-Queue = require 'utils.queue'
+Queue = require 'tools.adt.queue'
 
 test 'adding several elements', () ->
   q = new Queue()

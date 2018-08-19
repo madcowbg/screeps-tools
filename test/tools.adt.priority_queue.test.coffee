@@ -1,5 +1,5 @@
 _ = require 'lodash'
-PriorityQueue = require 'utils.priority_queue'
+PriorityQueue = require 'tools.adt.priority_queue'
 
 test "invalid heap ops", ->
   expect(() -> new PriorityQueue()).toThrow()

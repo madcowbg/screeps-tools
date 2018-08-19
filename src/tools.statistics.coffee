@@ -1,4 +1,4 @@
-log = require 'log'
+log = require 'tools.log'
 
 MAX_TICKS_STORED_STATISTIC = 10
 

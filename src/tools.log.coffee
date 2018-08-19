@@ -3,8 +3,7 @@ bold = (msg) -> "<b>#{msg}</b>"
 ital = (msg) -> "<i>#{msg}</i>"
 color = (color) -> (msg) -> "<font color='#{color}'>#{msg}</font>"
 
-module.exports.theTime = -1
-tickLog = () -> console.log(((color "#444") "[#{module.exports.theTime}]") + toStr arguments)
+tickLog = () -> console.log(((color "#444") "[#{Game.time}]") + toStr arguments)
 
 toStr = (args) ->
   #  console.log args

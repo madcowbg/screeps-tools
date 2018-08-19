@@ -1,4 +1,4 @@
-cache = require 'utils.cache'
+cache = require 'tools.cache'
 
 afterEach =>
   cache.invalidateMemoized()
