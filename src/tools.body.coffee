@@ -12,10 +12,10 @@ module.exports.creepDesign =
   claimer: (energyAvailable, opts) -> if energyAvailable >= BODYPART_COST[MOVE] + BODYPART_COST[CLAIM] then [MOVE, CLAIM] else []
   optimizedWorker: (energyAvailable, opts) ->
     opts = _.defaults opts, {minPower: 1, maxPower: 50}
-    return _.last _.filter((optimizedWorkerOfPower(n) for n in [opts.minPower..opts.maxPower]), (v) -> bodyPlanCost(v) <= energyAvailable)
+    return _.last _.filter((optimizedWorkerOfPower(n) for n in [opts.minPower..opts.maxPower]), (v) -> bodyPlanCost(v) <= energyAvailable and v.length <= 50)
   optimizedMiner: (energyAvailable, opts) ->
     opts = _.defaults opts, {minPower: 1, maxPower: 50}
-    return _.last _.filter((optimizedWorkerOfPower(n, true) for n in [opts.minPower..opts.maxPower]), (v) -> bodyPlanCost(v) <= energyAvailable)
+    return _.last _.filter((optimizedWorkerOfPower(n, true) for n in [opts.minPower..opts.maxPower]), (v) -> bodyPlanCost(v) <= energyAvailable and v.length <= 50)
 
 module.exports.bodyPlanCost = bodyPlanCost = (bodyPlan) ->
   _.sum(BODYPART_COST[type] for type in bodyPlan)
@@ -23,7 +23,7 @@ module.exports.bodyPlanCost = bodyPlanCost = (bodyPlan) ->
 maxRepeat = (basicBodyPlan, energyAvailable, opts = {}) ->
   opts = _.defaults opts, {minPower: 1, maxPower: 50}
   throw new Error("invalid energy #{energyAvailable} or max power #{opts.maxPower}.") unless 0 <= energyAvailable and 1 <= opts.minPower <= opts.maxPower
-  power = Math.min opts.maxPower, (Math.floor (energyAvailable / bodyPlanCost(basicBodyPlan)))
+  power = Math.min opts.maxPower, (Math.floor 50 / basicBodyPlan.length), (Math.floor (energyAvailable / bodyPlanCost(basicBodyPlan)))
   return _bodyRepeat(basicBodyPlan, power) if power >= opts.minPower
 
 _bodyRepeat = (body, n) ->
