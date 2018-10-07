@@ -1,4 +1,4 @@
-{decorateWithTiming, getTiming} = require 'tools.timing'
+{decorateWithTiming, getTiming} = require 'mockup.tools.timing'
 
 beforeEach ->
   global.Game =
