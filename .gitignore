@@ -1,10 +1,4 @@
-.idea/
-js/
 build/
 buildTest/
 node_modules/
-ScreepsAutocomplete-master/
 package-lock.json
-snippets/
-server/
-TODO/

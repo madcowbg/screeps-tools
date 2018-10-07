@@ -1,6 +1,13 @@
 {
+  "name": "screeps-tools",
+  "version": "v0.1.0",
+  "description": "Various tools to simplify Screeps AI tasks.",
+  "homepage": "https://github.com/madcowbg/screeps-tools",
+  "author": "Bono Nonchev",
+  "license": "MIT",
   "scripts": {
     "test": "npm run-script tests:compile && npm run-script just:test",
+    "dist": "del dist\\* /q && npm test && coffee --compile -b --output dist\\ src\\",
     "tests:clean": "del buildTest\\* /q",
     "tests:compile": "npm run-script tests:compile:src && npm run-script tests:compile:test",
     "tests:compile:src": "coffee --compile -b --output buildTest\\ src\\",
