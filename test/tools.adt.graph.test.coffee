@@ -25,7 +25,7 @@ test 'bfs on graph', ->
   bfsOrder = (el for el from bfs (vertex 1), (parent={}))
   expect(el.label for el in bfsOrder).toEqual [1, 2, 3, 5, 4, 6, 8, 7]
 
-  paths = _.fromPairs([el.label, dummyPath el, parent] for el in bfsOrder)
+  paths = _.object([el.label, dummyPath el, parent] for el in bfsOrder)
   expect(paths).toMatchObject(
     4: [4, 3, 1]
     5: [5, 3, 1]
@@ -51,7 +51,7 @@ test 'dijkstra on graph without terminal nodes', ->
     "8": 3
   }
 
-  paths = _.fromPairs([l, dummyPath (vertex l), prev] for l in _.keys dist)
+  paths = _.object([l, dummyPath (vertex l), prev] for l in _.keys dist)
   expect(paths).toMatchObject {
     "1": ["1"]
     "2": ["2", 1]

@@ -1,5 +1,4 @@
 {creepDesign, bodyPlanCost} = require 'tools.body'
-{expectJSON} = require 'util/compare.images'
 
 generateAll = (energyAvailable) ->
   bodies = {}
@@ -7,25 +6,58 @@ generateAll = (energyAvailable) ->
     bodies[k] = fun energyAvailable, {}
   return bodies
 
-tryAll = (energyAvailable, jsonFileName) ->
+tryAll = (energyAvailable, expectedBodies) ->
   bodies = generateAll energyAvailable
   for k, body of bodies
     expect(bodyPlanCost body).toBeLessThanOrEqual energyAvailable
 
-  expectJSON 'tools.body', jsonFileName, bodies, mode: 'assert'
+  expect(expectedBodies).toEqual(bodies)
 
 test 'create small creeps body plan', ->
-  tryAll 200, "smallBody"
+  tryAll 200, {
+    "versatileWorker":["work","carry","move"],
+    "courier":["carry","carry","move","move"],
+    "slowCourier":["carry","carry","move"],
+    "observer":["move"],
+    "claimer":[],
+    "optimizedWorker":["work","carry","move"],
+    "optimizedMiner":["work","carry","move"]
+  }
 
 test 'create medium creeps body plan', ->
-  tryAll 700, "mediumBody"
+  tryAll 700, {
+    "versatileWorker":["work","work","work","carry","carry","carry","move","move","move"],
+    "courier":["carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move"],
+    "slowCourier":["carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move"],
+    "observer":["move"],
+    "claimer":["move","claim"],
+    "optimizedWorker":["work","work","work","work","carry","carry","move","move","move"],
+    "optimizedMiner":["work","work","work","work","work","carry","move","move","move"]
+  }
 
 test 'create large creeps body plan', ->
-  tryAll 2500, "largeBody"
+  tryAll 2500, {
+    "versatileWorker":["work","work","work","work","work","work","work","work","work","work","work","work","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "courier":["carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "slowCourier":["carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "observer":["move"],
+    "claimer":["move","claim"],
+    "optimizedWorker":["work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move"],
+    "optimizedMiner":["work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","carry","move","move","move","move","move","move","move","move","move","move"]
+  }
 
 test 'verify max body size of 50 is enforced for any designer', ->
   unlimitedEnergyBodies = generateAll 10000
   for t, body of unlimitedEnergyBodies
     if body.length > 50 then throw new Error "#{t}, #{body.length}, #{JSON.stringify body}"
     expect(body.length).toBeLessThanOrEqual 50
-  expectJSON 'tools.body', "unlimitedEnergyBodies", unlimitedEnergyBodies, mode: 'generate'
+
+  expect(unlimitedEnergyBodies).toEqual {
+    "versatileWorker":["work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "courier":["carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "slowCourier":["carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "observer":["move"],
+    "claimer":["move","claim"],
+    "optimizedWorker":["work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","carry","carry","carry","carry","carry","carry","carry","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"],
+    "optimizedMiner":["work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","work","carry","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move","move"]
+  }
