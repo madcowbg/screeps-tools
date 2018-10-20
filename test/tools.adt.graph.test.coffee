@@ -1,5 +1,3 @@
-_ = require 'lodash'
-
 {bfs, dijstraSlowDynamic, path} = require 'tools.adt.graph'
 
 dummyGraph =

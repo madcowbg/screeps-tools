@@ -1,5 +1,3 @@
-_ = require 'lodash'
-
 keyFromVal = (a, i) -> "{#{i}:#{typeof a}:#{a}}"
 isCorrectKey = (a) -> typeof a != 'number' and typeof a != 'string'
 

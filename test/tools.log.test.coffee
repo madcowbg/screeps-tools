@@ -1,4 +1,3 @@
-_ = require 'lodash'
 log = require 'tools.log'
 
 test "logging has defined required functions", ->

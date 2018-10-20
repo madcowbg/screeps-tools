@@ -1,4 +1,3 @@
-_ = require 'lodash'
 naming = require './tools.naming'
 
 test 'generating creep name with undefined', () ->

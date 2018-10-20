@@ -1,4 +1,3 @@
-_ = require 'lodash'
 {coordToN, nToCoord} = require 'tools.coordinates'
 
 test "coordinate to number", ->

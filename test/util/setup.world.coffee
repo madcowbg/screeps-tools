@@ -3,6 +3,7 @@
 for k, v of require '@screeps/common/lib/constants'
   global[k] = v
 
+global._ = require 'lodash'
 
 objs = {}
 addID = (id, obj) ->

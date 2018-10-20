@@ -1,4 +1,3 @@
-_ = require 'lodash'
 PriorityQueue = require 'tools.adt.priority_queue'
 
 test "invalid heap ops", ->

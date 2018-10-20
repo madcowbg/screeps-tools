@@ -1,5 +1,3 @@
-_ = require 'lodash'
-
 statistics = require 'tools.statistics'
 
 beforeEach =>

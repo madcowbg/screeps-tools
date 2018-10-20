@@ -3,7 +3,6 @@ current =
   label: str
   adjacent: () -> [] of nbrs
 ###
-_ = require 'lodash'
 
 module.exports.bfs = (vertex, parent = {}, isVisited = {}) ->
   parent[vertex.label] = undefined

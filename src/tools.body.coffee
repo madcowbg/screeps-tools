@@ -1,5 +1,3 @@
-_ = require 'lodash'
-
 module.exports.creepDesign =
   versatileWorker: (energyAvailable, opts) ->
     maxRepeat([WORK, CARRY, MOVE], energyAvailable, opts)
